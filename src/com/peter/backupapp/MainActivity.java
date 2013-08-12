@@ -3,21 +3,26 @@ package com.peter.backupapp;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 
 import com.peter.backupapp.business.AppManager;
+import com.peter.backupapp.business.FileManager;
 import com.peter.backupapp.business.AppManager.Filter;
 import com.peter.backupapp.business.SaveFileService;
 import com.peter.backupapp.entity.AppInfo;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Random;
 
 public class MainActivity extends Activity {
 
+    static int tag = 0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,25 +41,38 @@ public class MainActivity extends Activity {
 
     public void onSave(View v) {
         List<AppInfo> apps = new AppManager(getApplicationContext())
-                .getAppsInfo(Filter.SYSTEM_INSTALLED_APPS);
-        String name = null;
+                .getAppsInfo(Filter.ALL_APPS);
+        String location = null;
         for (int i = 0; i < apps.size(); i++) {
-            if (apps.get(i).getPackageName().equals("com.htc.calendar")) {
-                 name = apps.get(i).getAppLocation();
+           // Log.i("peitao","name = "+apps.get(i).getPackageName());
+            if (apps.get(i).getPackageName().equals("com.tencent.WBlog")) {
+                location = apps.get(i).getAppLocation();
                  Log.i("peitao","size = "+apps.get(i).getAppSize());
                 break;
             }
         }
-        name = apps.get(0).getAppLocation();
-        Log.i("peitao","name = "+name);
-        
-        SaveFileService d = new SaveFileService(getApplicationContext());
+        //name = apps.get(0).getAppLocation();
+        Log.i("peitao","name = "+location);
+        tag++;
+        String name = "pt"+tag+".apk";
+        if(location!=null&&name!=null) {
+        File file = new File(Environment.getExternalStorageDirectory(), name);
         try {
-            d.saveToSdCard(name);
+            new FileManager().copyFile(location, file.getAbsolutePath());
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
+            Log.e("peitao","Failed to copy file");
         }
+        }
+        
+//        
+//        SaveFileService d = new SaveFileService(getApplicationContext());
+//        try {
+//            d.saveToSdCard2(name);
+//        } catch (IOException e) {
+//            // TODO Auto-generated catch block
+//            e.printStackTrace();
+//        }
 //        String con = null;
 //        try {
 //            con = d.readFile(name);

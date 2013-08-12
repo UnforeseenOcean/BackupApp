@@ -11,6 +11,7 @@ import java.io.InputStream;
 
 import android.content.Context;
 import android.os.Environment;
+import android.util.Log;
 
 public class SaveFileService
 {
@@ -75,9 +76,31 @@ public class SaveFileService
         fis.read(b);
         
         
-        File file = new File(Environment.getExternalStorageDirectory(), "pttest.apk");
+        File file = new File(Environment.getExternalStorageDirectory(), "pt123.apk");
         FileOutputStream fos = new FileOutputStream(file);
         fos.write(b);
+        fos.close();
+    }
+    
+    
+    // 保存文件到SD卡
+    public void saveToSdCard2(String filename) throws IOException
+    {
+        
+        FileInputStream fis = new FileInputStream(filename);
+        byte[] b2=new byte[1024];
+        byte[] b = new byte[fis.available()];
+        fis.read(b);
+        int n=0;
+        File file = new File(Environment.getExternalStorageDirectory(), "pt123.apk");
+        
+        Log.i("TAG", "file = "+file.getAbsolutePath());
+        FileOutputStream fos = new FileOutputStream(file);
+        while((n=fis.read(b))!=-1)  
+        {  
+            fos.write(b);
+            //把数据写到byte中  
+        }  
         fos.close();
     }
 
